@@ -8,10 +8,18 @@ package com.github.lpld.nand2tetris.asm
   */
 object Assembler extends App {
 
-  val source = args.headOption match {
-    case Some(fileName) => SourceFile.fromFile(fileName)
-    case None => throw new IllegalArgumentException("No filename provided")
-  }
+  val fileNameNoExt = args.headOption
+    .map(stripExtension)
+    .getOrElse(throw new IllegalArgumentException("No filename provided"))
 
+  val sourceFileName = fileNameNoExt + ".asm"
+  val destFileName = fileNameNoExt + ".hack"
 
+  val source = SourceFile.fromFile(sourceFileName)
+
+  new AsmWorker(source).assemble()
+
+  def stripExtension(fileName: String) =
+    if (fileName.endsWith(".asm")) fileName.dropRight(4)
+    else fileName
 }

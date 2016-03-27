@@ -1,29 +1,25 @@
 package com.github.lpld.nand2tetris.asm
 
-import org.scalatest.{FunSuite, Matchers}
-
-import scala.io.Source
 import scala.util.Failure
 
 /**
   * @author leopold
   * @since 27/03/16
   */
-class ParserTest extends FunSuite with Matchers {
+class ParserTest extends AsmTest {
 
   test("correctly parse input file") {
 
     val source = sourceFile("Fill.asm")
 
     // run parser
-    val parsedLines = new Parser(source.lines().toStream)
-      .parseCommands
+    val parsedLines = new Parser(source).parseCommands
 
     // get original lines from file
     val origLines = source.lines()
 
     // compare
-    parsedLines.zip(origLines.toStream)
+    parsedLines.zip(origLines)
       .foreach { case (cmd, line) =>
         cmd.isSuccess shouldBe true
         cmd.get.toString should equal(line)
@@ -33,7 +29,7 @@ class ParserTest extends FunSuite with Matchers {
 
   test("fail on bad input") {
     val source = sourceFile("Fill_bad.asm")
-    val parseResult = new Parser(source.lines().toStream).parseCommands
+    val parseResult = new Parser(source).parseCommands
 
     val badLine = parseResult.find(_.isFailure)
 
@@ -45,8 +41,5 @@ class ParserTest extends FunSuite with Matchers {
     }
   }
 
-  def sourceFile(name: String): SourceFile = new SourceFile {
-    override def source: Source = Source.fromInputStream(getClass.getClassLoader.getResourceAsStream(name))
-  }
 
 }

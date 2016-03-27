@@ -8,14 +8,15 @@ import scala.io.Source
   */
 trait SourceFile {
 
-  def source: Source
+  protected def rawLines: Iterator[String]
 
-  def lines(): TraversableOnce[String] = source.getLines()
+  def lines(): Stream[String] = rawLines
     .map(SourceFile.whitespaces.replaceAllIn(_, "")) // remove all whitespaces
     .map(l => SourceFile.trimLime.findAllIn(l).matchData) // regex match
     .filter(_.hasNext) // filter only matched lines, this is probably redundant
     .map(_.next().group(1)) // get effective string
     .filterNot(_.isEmpty) // filter out blank and comment lines
+    .toStream
 }
 
 object SourceFile {
@@ -25,6 +26,6 @@ object SourceFile {
   val trimLime = "([\\w@=();+-]*)(//.*)?".r
 
   def fromFile(fileName: String) = new SourceFile {
-    override def source: Source = Source.fromFile(fileName)
+    override def rawLines = Source.fromFile(fileName).getLines()
   }
 }
