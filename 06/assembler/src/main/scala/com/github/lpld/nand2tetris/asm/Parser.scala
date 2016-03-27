@@ -8,7 +8,7 @@ import scala.util.matching.Regex.Match
   * @author leopold
   * @since 27/03/16
   */
-class Parser(source: SourceFile) {
+class Parser(source: HackSource) {
 
   // parse each line
   def parseCommands: Stream[Try[Command]] =

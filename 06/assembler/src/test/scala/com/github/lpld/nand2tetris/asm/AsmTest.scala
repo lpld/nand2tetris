@@ -10,7 +10,8 @@ import scala.io.Source
   */
 trait AsmTest extends FunSuite with Matchers {
 
-  def sourceFile(name: String): SourceFile = new SourceFile {
+  def sourceFile(name: String): HackSource = new HackSource {
     override def rawLines = Source.fromInputStream(getClass.getClassLoader.getResourceAsStream(name)).getLines()
   }
+
 }

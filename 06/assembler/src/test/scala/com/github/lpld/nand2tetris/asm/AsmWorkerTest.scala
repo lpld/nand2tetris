@@ -7,7 +7,7 @@ package com.github.lpld.nand2tetris.asm
 class AsmWorkerTest extends AsmTest {
 
   test("assemble") {
-    new AsmWorker(sourceFile("Fill.asm")).assemble()
+    new AsmWorker(sourceFile("Fill.asm"), HackDest.forFile("Fill.hack")).assemble()
   }
 
 

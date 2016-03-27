@@ -15,9 +15,10 @@ object Assembler extends App {
   val sourceFileName = fileNameNoExt + ".asm"
   val destFileName = fileNameNoExt + ".hack"
 
-  val source = SourceFile.fromFile(sourceFileName)
+  val source = HackSource.forFile(sourceFileName)
+  val dest = HackDest.forFile(destFileName)
 
-  new AsmWorker(source).assemble()
+  new AsmWorker(source, dest).assemble()
 
   def stripExtension(fileName: String) =
     if (fileName.endsWith(".asm")) fileName.dropRight(4)
