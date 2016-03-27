@@ -43,12 +43,12 @@ sealed abstract class CommandType(val name: String, val regex: Regex) {
 object CommandType {
 
   // example: @8192 or @sum
-  case object A extends CommandType("A", "^@(\\w+)$".r) {
+  case object A extends CommandType("A", "^@([\\w\\.\\$]+)$".r) {
     def parseMatched(matched: Match) = ACommand(matched.group(1))
   }
 
   // example: (LOOP)
-  case object L extends CommandType("L", "^[(](\\w+)[)]$".r) {
+  case object L extends CommandType("L", "^[(]([\\w\\.\\$]+)[)]$".r) {
     def parseMatched(matched: Match) = LCommand(matched.group(1))
   }
 
