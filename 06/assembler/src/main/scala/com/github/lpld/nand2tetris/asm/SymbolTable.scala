@@ -1,4 +1,4 @@
-package com.github.lpld.nand2tetris
+package com.github.lpld.nand2tetris.asm
 
 /**
   * @author leopold

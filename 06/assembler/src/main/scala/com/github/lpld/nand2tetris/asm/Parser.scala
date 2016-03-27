@@ -1,5 +1,6 @@
-package com.github.lpld.nand2tetris
+package com.github.lpld.nand2tetris.asm
 
+import scala.util.Try
 import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
 
@@ -7,15 +8,25 @@ import scala.util.matching.Regex.Match
   * @author leopold
   * @since 27/03/16
   */
-class Parser {
+class Parser(lines: Stream[String]) {
 
-  def parseCommand(line: String): Option[Command] = {
-    // values is a Stream, so computation will be done only until we successfully parse a command
-    CommandType.values
-      .flatMap(_.tryParse(line)) // tryParse will return None, if the command doesn't match
-      .headOption // getting the first parsed command
-  }
+  def parseCommands: Stream[Try[Command]] =
+    lines.zipWithIndex
+      .map { case (line, idx) => (parseCommand(line), line, idx) }
+      .map { case (cmd, line, idx) =>
+        Try {
+          cmd.getOrElse(throw new ParserException(s"Error on line $idx. Bad string: $line"))
+        }
+      }
+
+
+  // values is a Stream, so computation will be done only until we successfully parse a command
+  private def parseCommand(line: String): Option[Command] = CommandType.values
+    .flatMap(_.tryParse(line)) // tryParse will return None, if the command doesn't match
+    .headOption // getting the first parsed command
 }
+
+class ParserException(message: String) extends Exception(message)
 
 sealed abstract class CommandType(val name: String, val regex: Regex) {
 
@@ -42,12 +53,12 @@ object CommandType {
   }
 
   // example: D=D+A or D;JEQ
-  case object C extends CommandType("C", "^((\\w+)=)?(\\w+)(;(\\w+))?".r) {
+  case object C extends CommandType("C", "^((\\w+)=)?([\\w+-]+)(;(\\w+))?$".r) {
 
     def parseMatched(matched: Match) = CCommand(
-      dest = matched.group(2),
+      dest = Option(matched.group(2)),
       comp = matched.group(3),
-      jump = matched.group(5)
+      jump = Option(matched.group(5))
     )
   }
 
