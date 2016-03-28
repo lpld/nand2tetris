@@ -19,6 +19,5 @@ object HackDest {
     override def write(lines: Stream[String]): Unit =
       Files.write(Paths.get(fileName), lines, StandardOpenOption.WRITE, StandardOpenOption.CREATE)
 
-
   }
 }

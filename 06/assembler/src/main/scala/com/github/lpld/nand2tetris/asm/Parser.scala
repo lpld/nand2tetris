@@ -28,7 +28,7 @@ class Parser(source: HackSource) {
 
 class ParserException(message: String) extends Exception(message)
 
-sealed abstract class CommandType(val name: String, val regex: Regex) {
+private sealed abstract class CommandType(val regex: Regex) {
 
   // try parse the command. if command doesn't match to the type, return None
   def tryParse(line: String): Option[Command] =
@@ -40,20 +40,20 @@ sealed abstract class CommandType(val name: String, val regex: Regex) {
   def parseMatched(matched: Match): Command
 }
 
-object CommandType {
+private object CommandType {
 
   // example: @8192 or @sum
-  case object A extends CommandType("A", "^@([\\w\\.\\$]+)$".r) {
+  case object A extends CommandType("^@([\\w\\.\\$]+)$".r) {
     def parseMatched(matched: Match) = ACommand(matched.group(1))
   }
 
   // example: (LOOP)
-  case object L extends CommandType("L", "^[(]([\\w\\.\\$]+)[)]$".r) {
+  case object L extends CommandType("^[(]([\\w\\.\\$]+)[)]$".r) {
     def parseMatched(matched: Match) = LCommand(matched.group(1))
   }
 
   // example: D=D+A or D;JEQ
-  case object C extends CommandType("C", "^((\\w+)=)?([\\w\\+\\-\\|\\&\\!]+)(;(\\w+))?$".r) {
+  case object C extends CommandType("^((\\w+)=)?([\\w\\+\\-\\|\\&\\!]+)(;(\\w+))?$".r) {
 
     def parseMatched(matched: Match) = CCommand(
       dest = Option(matched.group(2)),

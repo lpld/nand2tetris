@@ -11,16 +11,11 @@ class SymbolTable {
   val symbols = new mutable.HashMap[String, Int]
   var availableAddress = 0
 
-  def addSymbol(symbol: String, value: Int): Unit = {
+  def addSymbol(symbol: String, value: Int): Unit =
     if (symbols contains symbol) throw new IllegalArgumentException
     else symbols.put(symbol, value)
-  }
 
-  def getOrAddVariable(symbol: String): Int = {
-    symbols.getOrElseUpdate(symbol, nextAvailableAddress)
-  }
-
-  def getSymbol(symbol: String): Option[Int] = symbols get symbol
+  def getOrAddVariable(symbol: String): Int = symbols.getOrElseUpdate(symbol, nextAvailableAddress)
 
   private def nextAvailableAddress: Int = {
     val addr = availableAddress
